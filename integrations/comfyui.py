@@ -1,5 +1,6 @@
 import copy
 import json
+from pathlib import Path
 import random
 import time
 
@@ -10,7 +11,7 @@ import config
 
 
 def load_workflow():
-    return json.loads(config.WORKFLOW_PATH.read_text())
+    return json.loads(Path(config.config['comfyui']['workflow_file']).read_text())
 
 
 def patch_workflow(workflow: dict, prompt: str, seed: int):
@@ -42,7 +43,7 @@ def generate_image(prompt: str, seed: int = -1):
     )
 
     response = requests.post(
-        f"{config.COMFYUI_HOST}/prompt",
+        f"{config.config['comfyui']['host']}/prompt",
         json={"prompt": workflow},
         timeout=10,
     )
@@ -61,7 +62,7 @@ def download_image(filename: str) -> bytes:
         "subfolder": "",
         "type": "output",
     })
-    r = requests.get(f"{config.COMFYUI_HOST}/view?{params}", timeout=30)
+    r = requests.get(f"{config.config['comfyui']['host']}/view?{params}", timeout=30)
     r.raise_for_status()
     return r.content
 
@@ -72,7 +73,7 @@ def poll(prompt_id: str):
     while time.time() < deadline:
 
         history = requests.get(
-            f"{config.COMFYUI_HOST}/history/{prompt_id}"
+            f"{config.config['comfyui']['host']}/history/{prompt_id}"
         ).json()
 
         if prompt_id in history:
@@ -88,14 +89,14 @@ def poll(prompt_id: str):
 
 
 def free_vram():
-    requests.post(f"{config.COMFYUI_HOST}/interrupt")
+    requests.post(f"{config.config['comfyui']['host']}/interrupt")
     requests.post(
-        f"{config.COMFYUI_HOST}/queue",
+        f"{config.config['comfyui']['host']}/queue",
         json={"clear": True},
     )
 
     requests.post(
-        f"{config.COMFYUI_HOST}/free",
+        f"{config.config['comfyui']['host']}/free",
         json={
             "unload_models": True,
             "free_memory": True,

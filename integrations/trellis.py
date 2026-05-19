@@ -2,6 +2,7 @@ from pathlib import Path
 
 import requests
 
+import config
 import constants
 from integrations import comfyui
 
@@ -23,7 +24,7 @@ def generate_3d(image_filename: str, asset_type: str) -> str:
 
     try:
         response = requests.post(
-            f"{config.TRELLIS_HOST}/generate",
+            f"{config.config['trellis']['host']}/generate",
             files={"image": (image_filename, image_bytes, "image/png")},
             data={
                 "simplify":     tri_target,
@@ -36,7 +37,7 @@ def generate_3d(image_filename: str, asset_type: str) -> str:
     except requests.exceptions.RequestException as e:
         raise RuntimeError(f"Trellis generation failed: {e}")
 
-    out_path = config.MESHES_DIR / f"{Path(image_filename).stem}.glb"
+    out_path = constants.MESHES_DIR / f"{Path(image_filename).stem}.glb"
     out_path.write_bytes(response.content)
     print(f"  [3D] mesh saved: {out_path}")
     return str(out_path)

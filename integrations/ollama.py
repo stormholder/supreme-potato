@@ -4,15 +4,18 @@ import time
 import requests
 
 import config
+import constants
 
+OLLAMA_CLOUD="ollama.com"
 
 def load_model(model: str):
-    if "ollama.com" in config.OLLAMA_HOST:
+    ollama_host = config.config['ollama']['host']
+    if OLLAMA_CLOUD in ollama_host:
         return
     print(f"[VRAM] loading {model}")
 
     requests.post(
-        f"{config.OLLAMA_API}/generate",
+        f"{ollama_host}/generate",
         json={
             "model": model,
             "keep_alive": "10m",
@@ -23,12 +26,13 @@ def load_model(model: str):
 
 
 def unload_model(model: str):
-    if "ollama.com" in config.OLLAMA_HOST:
+    ollama_host = config.config['ollama']['host']
+    if OLLAMA_CLOUD in ollama_host:
         return
     print(f"[VRAM] unloading {model}")
 
     requests.post(
-        f"{config.OLLAMA_API}/generate",
+        f"{ollama_host}/generate",
         json={
             "model": model,
             "keep_alive": 0,
@@ -37,7 +41,7 @@ def unload_model(model: str):
         timeout=10,
     )
 
-    time.sleep(config.SWAP_SETTLE_TIME)
+    time.sleep(constants.SWAP_SETTLE_TIME)
 
 
 def swap_model(current: str | None, next_model: str):
@@ -50,9 +54,14 @@ def swap_model(current: str | None, next_model: str):
 
 
 def chat(model: str, system: str, user: str) -> str:
+    ollama_host = config.config['ollama']['host']
+    headers={}
+    if OLLAMA_CLOUD in ollama_host:
+        ollama_api_key = config.config['ollama']['api_key']
+        headers={"Authorization": f"Bearer {ollama_api_key}"}
     response = requests.post(
-        f"{config.OLLAMA_API}/chat",
-        headers=config.OLLAMA_HEADERS, 
+        f"{ollama_host}/api/chat",
+        headers=headers, 
         json={
             "model": model,
             "stream": False,
@@ -67,7 +76,7 @@ def chat(model: str, system: str, user: str) -> str:
                 },
             ],
         },
-        timeout=config.REQUEST_TIMEOUT,
+        timeout=constants.REQUEST_TIMEOUT,
     )
 
     response.raise_for_status()

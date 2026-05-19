@@ -2,6 +2,7 @@ from pathlib import Path
 import subprocess
 
 import config
+import constants
 from integrations import ollama
 
 
@@ -19,7 +20,7 @@ def generate_cleanup_script(
     user_msg = (
         f"Write a bpy script to process this mesh file: {mesh_path}\n"
         f"Asset type: {asset_type}\n"
-        f"Output .fbx to: {config.UNITY_DIR}/"
+        f"Output .fbx to: {constants.UNITY_DIR}/"
     )
     script_content = ollama.chat(model, system_prompt, user_msg)
 
@@ -32,7 +33,7 @@ def generate_cleanup_script(
         .strip()
     )
 
-    script_path = config.SCRIPTS_DIR / f"{Path(mesh_path).stem}_cleanup.py"
+    script_path = constants.SCRIPTS_DIR / f"{Path(mesh_path).stem}_cleanup.py"
     script_path.write_text(script_content)
     print(f"  [Blender] script saved: {script_path}")
     return str(script_path)
