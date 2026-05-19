@@ -2,7 +2,7 @@ from pathlib import Path
 
 import requests
 
-import config
+import constants
 from integrations import comfyui
 
 
@@ -17,14 +17,13 @@ def generate_3d(image_filename: str, asset_type: str) -> str:
     tri_targets are used as the simplify parameter — Trellis interprets
     lower values as more aggressive decimation.
     """
-    from prompts.system_prompts import TRI_TARGETS
-    tri_target = TRI_TARGETS.get(asset_type, 300)
+    tri_target = constants.TRI_TARGETS.get(asset_type, 300)
 
     image_bytes = comfyui.download_image(image_filename)
 
     try:
         response = requests.post(
-            "http://localhost:7860/generate",
+            f"{config.TRELLIS_HOST}/generate",
             files={"image": (image_filename, image_bytes, "image/png")},
             data={
                 "simplify":     tri_target,
