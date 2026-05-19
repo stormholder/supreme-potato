@@ -9,10 +9,16 @@ MODEL_WARMUP_PROMPT = " "
 
 WORKFLOW_PATH = Path("flux1_krea_dev.json")
 
-OUTPUT_IMAGES_DIR  = Path("output_images")
-OUTPUT_3D_DIR      = Path("output_3d")
-OUTPUT_BLENDER_DIR = Path("blender_scripts")
-OUTPUT_UNITY_DIR   = Path("Unity_Export")
+OUTPUT_DIR       = Path("pipeline_output")
+IMAGES_DIR       = OUTPUT_DIR / "images"
+MESHES_DIR       = OUTPUT_DIR / "meshes"
+SCRIPTS_DIR      = OUTPUT_DIR / "blender_scripts"
+UNITY_DIR        = OUTPUT_DIR / "Unity_Export"
+CONTEXTS_DIR     = OUTPUT_DIR / "contexts"
+ 
+for _d in [IMAGES_DIR, MESHES_DIR, SCRIPTS_DIR, UNITY_DIR, CONTEXTS_DIR]:
+    _d.mkdir(parents=True, exist_ok=True)
+
 MAX_RETRIES = 3
 
 TEXT_MODEL = "qwen3.5:9b"
