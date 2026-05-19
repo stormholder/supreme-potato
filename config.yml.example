@@ -1,0 +1,10 @@
+ollama:
+  host: https://ollama.com
+  api_key: "API_KEY_HERE"
+  text_model: gemma4:31b-cloud
+  vision_model: llava:13b
+comfyui:
+  host: http://localhost:8188
+  workflow_file: "flux1_krea_dev.json"
+trellis:
+  host: http://localhost:7860
