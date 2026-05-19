@@ -1,5 +1,6 @@
 __pycache__
 *.bak
 runs
+pipeline_output
 venv
 config.yml

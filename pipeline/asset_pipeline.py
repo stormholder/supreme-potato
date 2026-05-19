@@ -7,8 +7,8 @@ import config
 from constants import UNITY_DIR
 from prompts.system_prompts import SYSTEM_PROMPTS
 
-from context import PipelineContext
-from registry import STAGES, REQUIRES
+from pipeline.context import PipelineContext
+from pipeline.registry import STAGES, REQUIRES
 
 from integrations import ollama
 from integrations import comfyui
